@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Weather from "./components/Weather";
 import Error from "./components/Error";
 import { useDispatch, useSelector } from "react-redux";
-import { addWatchList } from "./utils/weatherDataSlice";
+import { addWatchList, removeFromWatchlist } from "./utils/weatherDataSlice";
 
 const App = () => {
   const dispatch = useDispatch();
-
-  const [data, setData] = useState({});
+  const watchlist = useSelector((state) => state.weather.watchlist);
+  const [data, setData] = useState(null);
   const [location, setLocation] = useState("");
-  // const [watchlist, setWatchList] = useState([]);
   const [error, setError] = useState(null);
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=5728a97e6b0c125f1e373022e3fb4433`;
 
@@ -20,23 +19,22 @@ const App = () => {
       setData(response.data);
       console.log(response.data);
       setLocation("");
+
       setError(null);
     } catch (error) {
       console.log(error);
       setError(error);
     }
   };
-
-  // const addToWatchlist = () => {
-  //   setWatchList([...watchlist, data]);
-  // };
-
-  const handleWeatherData = (data) => {
-    dispatch(addWatchList(data));
+  const handleWeatherData = () => {
+    if (data) {
+      dispatch(addWatchList(data));
+      // setData(null);
+    }
   };
 
   return (
-    <div className="w-full min-h-screen relative bg-gray-400 font-roboto">
+    <div className="w-full min-h-screen  bg-gray-400 font-roboto">
       <h1 className="text-4xl text-center font-bold py-4">WEATHER APP</h1>
       <form
         onSubmit={(e) => {
@@ -56,7 +54,7 @@ const App = () => {
           click
         </button>
         <button
-          onClick={() => handleWeatherData(data)}
+          onClick={handleWeatherData}
           className="p-3 m-3 bg-black text-white rounded-2xl">
           add to watchlist
         </button>
@@ -64,13 +62,20 @@ const App = () => {
       <div className="flex items-center justify-center">
         {error && <Error error={error} />}
       </div>
-
-      <Weather weatherData={data} />
-
-      <h2> WatchList </h2>
-      <button className="p-3 m-3 bg-black text-white rounded-2xl"></button>
+      {data && <Weather weatherData={data} />}
+      <div className="flex flex-row flex-wrap  m-4  ">
+        {watchlist.map((item) => (
+          <div key={item.id} className=" p-5 ">
+            <Weather
+              weatherData={item}
+              removeFromWatchlist={(item) =>
+                dispatch(removeFromWatchlist(item))
+              }
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
 export default App;

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Weather = ({ weatherData }) => {
+const Weather = ({ weatherData, removeFromWatchlist }) => {
   return (
     <div>
       {weatherData.weather ? (
@@ -28,6 +28,13 @@ const Weather = ({ weatherData }) => {
           </div>
         </div>
       ) : null}
+      <div className="relative top-0 right-0">
+        <button
+          className=" p-3 m-3 bg-black text-white rounded-2xl absolute bottom-0 right-0"
+          onClick={() => removeFromWatchlist(weatherData)}>
+          remove
+        </button>
+      </div>
     </div>
   );
 };

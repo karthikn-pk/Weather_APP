@@ -7,8 +7,13 @@ const weatherDataSlice = createSlice({
     addWatchList: (state, action) => {
       state.watchlist.push(action.payload);
     },
+    removeFromWatchlist: (state, action) => {
+      state.watchlist = state.watchlist.filter(
+        (item) => item.id !== action.payload.id
+      );
+    },
   },
 });
 
-export const { addWatchList } = weatherDataSlice.actions;
+export const { addWatchList, removeFromWatchlist } = weatherDataSlice.actions;
 export default weatherDataSlice.reducer;
